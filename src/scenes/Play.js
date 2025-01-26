@@ -5,7 +5,11 @@ class Play extends Phaser.Scene {
 
     create() {
         //place tile sprite
-        this.starfield = this.add.tileSprite(0, 0, 640, 480, 'starfield').setOrigin(0,0)
+        this.layerFAR = this.add.tileSprite(0, 0, 640, 480, 'layerFAR').setOrigin(0,0)
+        this.layerMID = this.add.tileSprite(0, 0, 640, 480, 'layerMID').setOrigin(0,0)
+        this.layerCLOSE = this.add.tileSprite(0, 0, 640, 480, 'layerCLOSE').setOrigin(0,0)
+
+
         // green UI background
         this.add.rectangle(0, borderUISize + borderPadding, game.config.width, borderUISize * 2, 0x00FF00).setOrigin(0, 0)
         // white borders
@@ -16,9 +20,9 @@ class Play extends Phaser.Scene {
 
         //add rocket (pl1)
         this.p1Rocket = new Rocket(this, game.config.width/2, game.config.height - borderUISize - borderPadding, 'rocket').setOrigin(0.5, 0)
-        this.ship01 = new Spaceship(this, game.config.width + borderUISize*6, borderUISize*4, 'spaceship', 0, 30).setOrigin(0, 0)
+        this.ship01 = new UFOship(this, game.config.width + borderUISize*6, borderUISize*4, 'UFOship', 0, 30).setOrigin(0, 0)
         this.ship02 = new Spaceship(this, game.config.width + borderUISize*3, borderUISize*5 + borderPadding*2, 'spaceship', 0, 20).setOrigin(0, 0)
-        this.ship03 = new Spaceship(this, game.config.width, borderUISize*6 + borderPadding*4, 'spaceship', 0, 10).setOrigin(0, 0)
+        this.ship03 = new UFOship(this, game.config.width, borderUISize*6 + borderPadding*4, 'UFOship', 0, 10).setOrigin(0, 0)
 
 
 
@@ -63,7 +67,9 @@ class Play extends Phaser.Scene {
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyLEFT)) {
             this.scene.start("menuScene")
         }
-        this.starfield.tilePositionX -= 4
+        this.layerFAR.tilePositionX -= 3
+        this.layerMID.tilePositionX -= 2
+        this.layerCLOSE.tilePositionX -= .5
         if(!this.gameOver){
             this.p1Rocket.update()
             this.ship01.update()
@@ -96,6 +102,7 @@ class Play extends Phaser.Scene {
             return false
          }
     }
+    
     shipExplode(ship){
         ship.alpha = 0
         let boom = this.add.sprite(ship.x, ship.y, 'explosion').setOrigin(0, 0);
@@ -107,6 +114,16 @@ class Play extends Phaser.Scene {
         })
         this.p1Score += ship.points
         this.scoreLeft.text = this.p1Score
-        this.sound.play('sfx-explosion')
+
+        let roll = Phaser.Math.Between(1, 4)
+        if (roll == 1){
+            this.sound.play('sound1')
+        }else if(roll == 2){
+            this.sound.play('sound2')
+        }else if(roll == 3){
+            this.sound.play('sound3')
+        }else if(roll == 4){
+            this.sound.play('sound4')
+        }
     }
 }
