@@ -47,20 +47,48 @@ class Play extends Phaser.Scene {
             fixedWidth: 100
         }
         this.scoreLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding*2, this.p1Score, scoreConfig)
+        
+        this.timerText = this.add.text(game.config.width - 150, 10, 'Time: 60', {
+            fontFamily: 'Courier',
+            fontSize: '28px',
+            backgroundColor: '#F3B141',
+            color: '#843605',
+            align: 'right',
+            padding: {
+                top: 5,
+                bottom: 5,
+            },
+            fixedWidth: 140
 
+
+        })
         // GAME OVER flag
         this.gameOver = false
         
         // 60-second play clock
         scoreConfig.fixedWidth = 0
+        this.startTime = this.time.now
         this.clock = this.time.delayedCall(60000, () => {
             this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', scoreConfig).setOrigin(0.5)
             this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (R) to Restart or ← for Menu’', scoreConfig).setOrigin(0.5)
             this.gameOver = true
         }, null, this)
 
+
     }
+
+    updateTimer() {
+        const remainingTime = Math.max(0, 60000 - (this.time.now - this.startTime))
+        this.timerText.setText(`Time: ${Math.ceil(remainingTime / 1000)}`)
+    }
+    adjustTimer(seconds) {
+        const newTime = Math.max(0, 60000 - (this.time.now - this.startTime) + seconds * 1000);
+        this.startTime = this.time.now - (60000 - newTime);
+    }
+
     update() {
+        this.updateTimer()
+
         if(this.gameOver && Phaser.Input.Keyboard.JustDown(keyRESET)){
             this.scene.restart()
         }
@@ -79,17 +107,28 @@ class Play extends Phaser.Scene {
         
 
         if(this.checkCollision(this.p1Rocket, this.ship03)){
+            this.adjustTimer(5); // Add 5 seconds for a hit
             this.p1Rocket.reset()
             this.shipExplode(this.ship03)
         }
         if(this.checkCollision(this.p1Rocket, this.ship02)){
+            this.adjustTimer(5); // Add 5 seconds for a hit
             this.p1Rocket.reset()
             this.shipExplode(this.ship02)
         }
+        
         if(this.checkCollision(this.p1Rocket, this.ship01)){
+            this.adjustTimer(5); // Add 5 seconds for a hit
             this.p1Rocket.reset()
             this.shipExplode(this.ship01)
         }
+
+        // Reset rocket position after firing
+        if (this.p1Rocket.y <= borderUISize * 3 + borderPadding) {
+            this.p1Rocket.isFiring = false;
+            this.p1Rocket.y = game.config.height - borderUISize - borderPadding;
+            this.adjustTimer(-5)
+        }        
     }
 
     checkCollision(rocket, ship) {

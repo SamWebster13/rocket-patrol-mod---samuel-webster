@@ -57,8 +57,14 @@ class Menu extends Phaser.Scene {
         // define keys
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT)   
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT)
+
+        
     }
+
+    //updates the clock text block
+    
     update() {
+  
         if (Phaser.Input.Keyboard.JustDown(keyLEFT)) {
           // easy mode
           game.settings = {
@@ -66,7 +72,8 @@ class Menu extends Phaser.Scene {
             gameTimer: 60000    
           }
           this.sound.play('sfx-select')
-          this.scene.start('playScene')    
+          this.scene.start('playScene')
+    
         }
         if (Phaser.Input.Keyboard.JustDown(keyRIGHT)) {
           // hard mode
@@ -75,7 +82,8 @@ class Menu extends Phaser.Scene {
             gameTimer: 45000    
           }
           this.sound.play('sfx-select')
-          this.scene.start('playScene')    
+          this.scene.start('playScene')
+    
         }
       }
 

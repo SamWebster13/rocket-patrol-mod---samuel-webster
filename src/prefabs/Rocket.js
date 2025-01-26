@@ -12,9 +12,21 @@ class Rocket extends Phaser.GameObjects.Sprite {
 
 
     }
-
     update(){
-        if(!this.isFiring){
+        
+        this.x = this.scene.input.activePointer.x;
+        if (this.scene.input.activePointer.isDown && !this.isFiring) {
+            this.isFiring = true;
+            this.sfxShot.play();
+        }
+        // Rocket movement during firing
+        if (this.isFiring && this.y >= borderUISize * 3 + borderPadding) {
+            this.y -= this.moveSpeed;
+        }
+
+      
+        
+        /*if(!this.isFiring){
             if(keyLEFT.isDown && this.x >= borderUISize + this.width){
                 this.x -= this.moveSpeed
             }else if(keyRIGHT.isDown && this.x <= game.config.width - borderUISize - this.width){
@@ -33,7 +45,7 @@ class Rocket extends Phaser.GameObjects.Sprite {
         if(this.y <= borderUISize * 3 + borderPadding){
             this.isFiring = false
             this.y = game.config.height - borderUISize - borderPadding
-        }        
+        }*/        
     }
 
     reset() {
